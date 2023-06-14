@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+RUN sed -i -e 's/http\(s\)*:\(.*\)\/ubuntu/http:\/\/mirrors.ustc.edu.cn\/ubuntu/g' /etc/apt/sources.list
+
 ARG USERNAME=onnxgraphqt
 ARG HOME=/home/${USERNAME}
 ARG GID=1000
@@ -32,6 +34,8 @@ RUN git clone https://github.com/fateshelled/OnnxGraphQt && \
     python3 -m pip install -U onnxruntime && \
     python3 -m pip install -U -r requirements.txt && \
     rm -rf ~/.cache/pip
+
+ENV PATH=${HOME}/.local/bin:$PATH
 
 WORKDIR ${HOME}/OnnxGraphQt
 CMD [ "python3", "onnxgraphqt/main.py" ]
