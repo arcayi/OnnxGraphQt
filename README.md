@@ -15,7 +15,7 @@ ONNX model visualizer. You can edit model structure with GUI!
 - PySide2
 - Qt.py
 - Numpy
-- OpenCV
+- Pillow
 - onnx
 - onnx-simplifier
 - onnx_graphsurgeon
@@ -26,7 +26,6 @@ ONNX model visualizer. You can edit model structure with GUI!
 ## Install
 ```bash
 sudo apt install python3-pyside2*
-sudo apt install python3-opencv
 
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
@@ -36,6 +35,9 @@ python3 -m pip install -U Qt.py
 # python3 -m pip install -U onnxruntime
 # python3 -m pip install -U onnxruntime-gpu
 python3 -m pip install -U -r requirements.txt
+
+# Install OnnxGraphQt
+python3 -m pip install .
 ```
 
 ## Run with Docker
@@ -50,13 +52,11 @@ cd OnnxGraphQt
 
 ## Usage
 ```bash
-cd OnnxGraphQt
-
 # Open empty graph
-python3 onnxgraphqt/main.py
+onnxgraphqt
 
 # Open with onnx model
-python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
+onnxgraphqt onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 

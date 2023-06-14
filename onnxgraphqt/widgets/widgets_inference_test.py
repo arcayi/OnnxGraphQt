@@ -7,10 +7,9 @@ from ast import literal_eval
 import onnx
 import onnxruntime as ort
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
-from utils.color import replace_PrintColor
+import os
+from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.utils.color import replace_PrintColor
 
 ONNX_PROVIDER_TABLE = {
     "TensorrtExecutionProvider": ["tensorrt"],
@@ -42,7 +41,7 @@ class InferenceProcess(QtCore.QThread):
 
     def run(self):
         self.btn_signal.emit(False)
-        cmd = f"sit4onnx "
+        cmd = f"python3 -m sit4onnx "  # fix for docker
         cmd += f" --input_onnx_file_path {self.onnx_file_path} "
         cmd += f" --batch_size {self.batch_size} "
         cmd += f" --test_loop_count {self.test_loop_count} "

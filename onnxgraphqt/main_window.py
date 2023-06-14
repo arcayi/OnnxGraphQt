@@ -1,5 +1,6 @@
 import sys, os, io
 import time
+import signal
 
 from PySide2 import QtCore, QtWidgets, QtGui
 import onnx
@@ -22,29 +23,30 @@ from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 from ssc4onnx import structure_check
 from sio4onnx import io_change as onnx_tools_io_change
 
-from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
-from widgets.widgets_message_box import MessageBox
-from widgets.widgets_combine_network import CombineNetworkWidgets
-from widgets.widgets_extract_network import ExtractNetworkWidgets
-from widgets.widgets_add_node import AddNodeWidgets
-from widgets.widgets_change_opset import ChangeOpsetWidget
-from widgets.widgets_change_channel import ChangeChannelWidgets
-from widgets.widgets_constant_shrink import ConstantShrinkWidgets
-from widgets.widgets_modify_attrs import ModifyAttrsWidgets
-from widgets.widgets_delete_node import DeleteNodeWidgets
-from widgets.widgets_generate_operator import GenerateOperatorWidgets
-from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
-from widgets.widgets_rename_op import RenameOpWidget
-from widgets.widgets_node_search import NodeSearchWidget
-from widgets.widgets_inference_test import InferenceTestWidgets
-from widgets.widgets_change_input_ouput_shape import ChangeInputOutputShapeWidget
+from onnxgraphqt.widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
+from onnxgraphqt.widgets.splash_screen import create_screen
+from onnxgraphqt.widgets.widgets_combine_network import CombineNetworkWidgets
+from onnxgraphqt.widgets.widgets_extract_network import ExtractNetworkWidgets
+from onnxgraphqt.widgets.widgets_add_node import AddNodeWidgets
+from onnxgraphqt.widgets.widgets_change_opset import ChangeOpsetWidget
+from onnxgraphqt.widgets.widgets_change_channel import ChangeChannelWidgets
+from onnxgraphqt.widgets.widgets_constant_shrink import ConstantShrinkWidgets
+from onnxgraphqt.widgets.widgets_modify_attrs import ModifyAttrsWidgets
+from onnxgraphqt.widgets.widgets_delete_node import DeleteNodeWidgets
+from onnxgraphqt.widgets.widgets_generate_operator import GenerateOperatorWidgets
+from onnxgraphqt.widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
+from onnxgraphqt.widgets.widgets_rename_op import RenameOpWidget
+from onnxgraphqt.widgets.widgets_node_search import NodeSearchWidget
+from onnxgraphqt.widgets.widgets_inference_test import InferenceTestWidgets
+from onnxgraphqt.widgets.widgets_change_input_ouput_shape import ChangeInputOutputShapeWidget
 
-from widgets.custom_properties_bin import CustomPropertiesBinWidget
+from onnxgraphqt.widgets.custom_properties_bin import CustomPropertiesBinWidget
 
-from graph.onnx_node_graph import ONNXNodeGraph
-from utils.opset import DEFAULT_OPSET
-from utils.color import remove_PrintColor
-from utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
+from onnxgraphqt.graph.onnx_node_graph import ONNXNodeGraph
+from onnxgraphqt.utils.opset import DEFAULT_OPSET
+from onnxgraphqt.utils.color import remove_PrintColor
+from onnxgraphqt.utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -1485,11 +1487,47 @@ class MainWindow(QtWidgets.QMainWindow):
         sys.exit(0)
 
 
-if __name__ == "__main__":
-    import signal
-    import os, time
-    from widgets.splash_screen import create_screen, create_screen_progressbar
+def main():
+    args = sys.argv
+    onnx_model_path = args[1] if len(args)>1 else ""
 
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    app = QtWidgets.QApplication([])
+
+    splash = create_screen()
+    splash.show()
+    time.sleep(0.05)
+    msg = ""
+    msg_align = QtCore.Qt.AlignBottom
+    msg_color = QtGui.QColor.fromRgb(255, 255, 255)
+    if onnx_model_path:
+        msg = f"loading [{os.path.basename(onnx_model_path)}]"
+    else:
+        msg = "loading..."
+    splash.showMessage(msg, alignment=msg_align, color=msg_color)
+    print(msg)
+    if not onnx_model_path:
+        time.sleep(1.0)
+
+    app.processEvents()
+
+    main_window = MainWindow(onnx_model_path=onnx_model_path)
+
+    msg = "load complete."
+    splash.showMessage(msg, alignment=msg_align, color=msg_color)
+    print(msg)
+    time.sleep(0.1)
+
+    app.processEvents()
+
+    splash.finish(main_window)
+    main_window.show()
+
+    app.exec_()
+
+
+if __name__ == "__main__":
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

@@ -19,8 +19,7 @@ RUN apt update && \
         bash-completion \
         python3-dev \
         python3-pip \
-        python3-pyside2* \
-        python3-opencv && \
+        python3-pyside2* && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -33,9 +32,10 @@ RUN git clone https://github.com/fateshelled/OnnxGraphQt && \
     python3 -m pip install -U Qt.py && \
     python3 -m pip install -U onnxruntime && \
     python3 -m pip install -U -r requirements.txt && \
+    python3 -m pip install . && \
     rm -rf ~/.cache/pip
 
 ENV PATH=${HOME}/.local/bin:$PATH
 
 WORKDIR ${HOME}/OnnxGraphQt
-CMD [ "python3", "onnxgraphqt/main.py" ]
+CMD [ "python3", "-m", "onnxgraphqt" ]
