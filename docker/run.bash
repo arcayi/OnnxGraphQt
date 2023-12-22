@@ -22,5 +22,5 @@ docker run --net=host --rm -it \
         -e=QT_X11_NO_MITSHM=1 \
         -e=QT_X11_NO_MITSHM=1 \
         -e=QT_AUTO_SCREEN_SCALE_FACTOR=1 \
-        -e=QT_SCALE_FACTOR=1.5 \
         onnxgraphqt:latest
+        # -e=QT_SCALE_FACTOR=1.5 \
